@@ -5,6 +5,31 @@ Ingests and structures unstructured RFP documents and matches them against inter
 
 Lytcon is a workflow-driven system for analyzing tender and bid documents. It is designed to reduce manual effort in processing unstructured requirements and help IT service providers evaluate opportunities more consistently.
 
+## System Architecture
+
+The system is structured as a workflow pipeline:
+
+1. Input Layer  
+   - RFP documents (PDF, text) or external tender APIs
+
+2. Processing Layer (n8n workflows)  
+   - document parsing and extraction  
+   - normalization of requirements  
+   - structuring into predefined schema  
+
+3. Storage Layer (Supabase + R2)  
+   - structured requirement data  
+   - internal capability and pricing profiles  
+   - document storage  
+
+4. Matching Layer  
+   - comparison between external requirements and internal profiles  
+   - rule-based and embedding-supported matching  
+
+5. Output Layer  
+   - structured view of requirements  
+   - evaluation of fit  
+   - support for bid/no-bid decisions  
 ## What it does
 
 - ingests tender / RFP inputs from documents or external sources
