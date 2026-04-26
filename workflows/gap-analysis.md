@@ -1,6 +1,6 @@
 # Retrieval-Assisted Gap Analysis
 
-![Retrieval-Assisted Gap Analysis](../images/workflow-gap-analysis.png)
+images/gap-analysis.png
 
 ## Purpose
 
