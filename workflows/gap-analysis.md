@@ -8,7 +8,7 @@ Match open RFP questions against reviewed SOW content, draft cautious gap answer
 
 ## What it proves
 
-This workflow demonstrates retrieval-assisted matching, vector-style comparison, reviewed-vs-draft answer paths, LLM-assisted gap drafting, structured parsing, and generation of a human-review artifact.
+This workflow demonstrates retrieval-assisted matching, embedding-based retrieval, reviewed-vs-draft answer paths, LLM-assisted gap drafting, structured parsing, and generation of a human-review artifact.
 
 ## Main steps
 
