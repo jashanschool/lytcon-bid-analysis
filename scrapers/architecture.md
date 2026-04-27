@@ -1,3 +1,5 @@
+# Tender Document Finder Architecture
+
 ## Purpose
 
 The scraper layer in Lytcon is a Tender Document Finder and document retrieval layer. Its role is to discover relevant public-sector IT tender opportunities, resolve procurement document targets, and hand usable document references into the downstream RFP analysis workflow.
