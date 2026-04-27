@@ -1,0 +1,34 @@
+{
+  "_note": "Simplified public-safe example of retrieval-assisted matching. Embedding similarity is used to retrieve relevant reviewed source material. It does not replace human review.",
+  "query_item": {
+    "id": "REQ-002",
+    "text": "Response time for priority 1 incidents must not exceed 30 minutes.",
+    "category": "SLA & Support"
+  },
+  "retrieval_results": [
+    {
+      "source_id": "SOW-014",
+      "source_type": "reviewed_sow_content",
+      "source_title": "Managed Workplace Support SOW",
+      "matched_text": "Critical incidents are handled through the 24/7 support path. Priority 1 cases are escalated immediately and monitored until resolution.",
+      "similarity_score": 0.81,
+      "match_interpretation": "related_but_not_confirmed",
+      "review_required": true
+    },
+    {
+      "source_id": "SLA-003",
+      "source_type": "sla_profile",
+      "source_title": "Priority Incident Response Profile",
+      "matched_text": "Priority 1 incidents follow the critical incident process. Initial response targets may vary depending on contract tier.",
+      "similarity_score": 0.76,
+      "match_interpretation": "needs_review",
+      "review_required": true
+    }
+  ],
+  "draft_review_output": {
+    "status": "needs_review",
+    "answer": "Relevant support and SLA content was found, but the exact 30-minute response commitment is not confirmed by the retrieved sources.",
+    "reason": "The retrieved sources discuss priority incident support, but do not explicitly confirm the required 30-minute response time.",
+    "human_review_next_step": "Confirm whether the 30-minute response time can be contractually committed before using this answer in a bid."
+  }
+}
