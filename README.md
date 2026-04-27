@@ -184,34 +184,6 @@ The system is not designed to treat generated answers as final truth. Reviewed c
 ]
 ```
 
-## Repository Structure
-
-```text
-.
-├── README.md
-├── images/
-│   ├── workflow-tender-discovery.png
-│   ├── workflow-rfp-document-extraction.png
-│   └── workflow-gap-analysis.png
-├── frontend/
-│   └── screenshots/
-│       ├── tender-detail.png
-│       ├── document-upload-flow.png
-│       └── rfp-workspace.png
-├── workflows/
-│   ├── tender-discovery.md
-│   ├── rfp-document-extraction.md
-│   └── gap-analysis.md
-├── scrapers/
-│   └── architecture.md
-├── examples/
-│   ├── sample-rfp-input.md
-│   ├── extracted-requirements.json
-│   ├── gap-analysis-output.json
-│   └── embedding-match-example.json
-└── sql/
-    └── requirement_match_schema.sql
-```
 
 ## My Role
 
