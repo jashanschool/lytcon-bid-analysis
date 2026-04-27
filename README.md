@@ -10,6 +10,11 @@ Tender documents are often long, inconsistent, and difficult to evaluate manuall
 
 The goal of this project is to turn messy tender input into structured, reviewable information that can support faster and more consistent bid decisions.
 
+## What this repository contains
+
+This repository is a sanitized technical case study of the Lytcon bid-analysis workflow. It documents the system design, workflow logic, data models, examples, and selected product screenshots.
+
+It does not contain the full production codebase, private workflow exports, credentials, customer data, or live infrastructure configuration.
 ## Live Product
 
 A public-facing version of the product concept is available at:
