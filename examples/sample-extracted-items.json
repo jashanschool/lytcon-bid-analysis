@@ -1,0 +1,38 @@
+{
+  "_note": "Simplified public-safe example based on the Lytcon RFP extraction workflow. This is not a production export.",
+  "source_document": "sample-rfp-input.md",
+  "items": [
+    {
+      "id": "REQ-001",
+      "type": "requirement",
+      "category": "SLA & Support",
+      "text": "The provider must offer 24/7 support for priority 1 incidents.",
+      "importance": "high",
+      "review_required": true
+    },
+    {
+      "id": "REQ-002",
+      "type": "requirement",
+      "category": "SLA & Support",
+      "text": "Response time for priority 1 incidents must not exceed 30 minutes.",
+      "importance": "high",
+      "review_required": true
+    },
+    {
+      "id": "REQ-003",
+      "type": "requirement",
+      "category": "Service Management",
+      "text": "The provider should provide a named service manager.",
+      "importance": "medium",
+      "review_required": true
+    },
+    {
+      "id": "REQ-004",
+      "type": "requirement",
+      "category": "Reporting",
+      "text": "The provider must provide monthly SLA reporting.",
+      "importance": "medium",
+      "review_required": true
+    }
+  ]
+}
