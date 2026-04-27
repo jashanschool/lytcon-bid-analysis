@@ -77,7 +77,7 @@ These modules are intentionally small and testable. They are reference implement
 
 The tender discovery workflow builds a focused search profile for public-sector IT opportunities, branches between structured notice sources and portal-specific sources, normalizes metadata, validates document candidates, and hands usable targets into the RFP analysis pipeline.
 
-![Tender discovery workflow](images/sanitized-tender-discovery.svg)
+![Tender discovery workflow](images/tender-discovery.png)
 
 This workflow is documented in [`workflows/tender-discovery.md`](workflows/tender-discovery.md).
 
