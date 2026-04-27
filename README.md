@@ -59,11 +59,25 @@ The architecture therefore separates discovery, retrieval, extraction, matching,
 
 ## Key Components
 
+### Code And Orchestration Boundary
+
+n8n is used as the orchestration layer: it connects ingestion steps, storage handoffs, document processing, extraction, and review workflows. The project does not rely on n8n as a substitute for backend logic.
+
+Several parts of this domain are better expressed as deterministic code because AI agents and workflow tools can make brittle decisions around URLs, document candidates, field extraction, and requirement matching. The public-safe JavaScript modules in `src/` show the kind of backend logic that sits behind the workflows:
+
+- URL safety validation for public tender links
+- document candidate scoring and ranking
+- document target extraction from portal links
+- requirement parsing from RFP text
+- retrieval-style gap matching against reviewed source content
+
+These modules are intentionally small and testable. They are reference implementations, not a full production scraper.
+
 ### 1. Tender Discovery
 
 The tender discovery workflow builds a focused search profile for public-sector IT opportunities, branches between structured notice sources and portal-specific sources, normalizes metadata, validates document candidates, and hands usable targets into the RFP analysis pipeline.
 
-![Tender discovery workflow](images/workflow-tender-discovery.png)
+![Tender discovery workflow](images/sanitized-tender-discovery.svg)
 
 This workflow is documented in [`workflows/tender-discovery.md`](workflows/tender-discovery.md).
 
@@ -84,7 +98,7 @@ The architecture notes are in [`scrapers/architecture.md`](scrapers/architecture
 
 Once documents are available, the extraction workflow turns raw RFP files into structured review data. It covers PDF extraction, document-type classification, routing, section/chunk creation, requirement extraction, and persistence of extracted items.
 
-![RFP document classification and extraction workflow](images/workflow-rfp-document-extraction.png)
+![RFP document classification and extraction workflow](images/sanitized-rfp-document-extraction.svg)
 
 This workflow is documented in [`workflows/rfp-document-extraction.md`](workflows/rfp-document-extraction.md).
 
@@ -92,7 +106,7 @@ This workflow is documented in [`workflows/rfp-document-extraction.md`](workflow
 
 The gap-analysis workflow matches open RFP questions against reviewed SOW/Q&A content. High-confidence reviewed material can be reused; uncertain matches become draft answers that still require human review.
 
-![Retrieval-assisted gap analysis workflow](images/gap-analysis.png)
+![Retrieval-assisted gap analysis workflow](images/sanitized-gap-analysis.svg)
 
 This workflow is documented in [`workflows/gap-analysis.md`](workflows/gap-analysis.md).
 
@@ -166,7 +180,7 @@ Document upload flow for adding tender files before downstream classification an
 
 | Category | Current state |
 | --- | --- |
-| Implemented/prototyped | Product screens, workflow diagrams, example schemas, example review queries, retrieval/matching examples, scraper architecture notes |
+| Implemented/prototyped | Product screens, workflow diagrams, JavaScript reference modules, example schemas, example review queries, retrieval/matching examples, scraper architecture notes |
 | Documented but environment-specific | n8n orchestration, storage handoffs, portal-specific retrieval, RFP processing triggers |
 | Experimental | Portal coverage, document candidate scoring, retrieval thresholds, gap-answer drafting, bid-support output generation |
 | Not claimed | Production readiness, complete portal coverage, fully automated bid submission, customer deployment, security certification |
@@ -202,11 +216,20 @@ This repository should be read as an early technical artifact, not a finished en
 ├── frontend/
 │   └── screenshots/
 ├── images/
-│   ├── workflow-tender-discovery.png
-│   ├── workflow-rfp-document-extraction.png
-│   └── gap-analysis.png
+│   ├── sanitized-tender-discovery.svg
+│   ├── sanitized-rfp-document-extraction.svg
+│   └── sanitized-gap-analysis.svg
 ├── scrapers/
 │   └── architecture.md
+├── src/
+│   ├── extraction/
+│   │   └── requirementParser.js
+│   ├── matching/
+│   │   └── gapMatcher.js
+│   └── retrieval/
+│       ├── candidateScoring.js
+│       ├── documentTargets.js
+│       └── urlSafety.js
 ├── sql/
 │   ├── requirement_match_schema.sql
 │   └── example_queries.sql
