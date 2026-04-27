@@ -1,225 +1,229 @@
 # Lytcon Bid Analysis
 
-AI-assisted RFP analysis pipeline for discovering public-sector tenders, processing RFP documents, extracting requirements, and supporting bid/no-bid decisions.
+Lytcon Bid Analysis is an early technical case study for finding, retrieving, and structuring public-sector IT tender documents so that bid teams can review requirements, risks, and open questions more systematically.
 
-## Overview
+The repository is intentionally scoped as a public-safe portfolio version. It shows the workflow design, example data structures, SQL model, scraper/document-retrieval architecture, and selected product screens. It does not contain private credentials, customer data, live workflow endpoints, or a complete production deployment.
 
-Lytcon Bid Analysis is a workflow-driven system for working with public-sector tender and RFP documents.
+## Problem
 
-Tender documents are often long, inconsistent, and difficult to evaluate manually. Important information is spread across PDFs, service descriptions, SLA sections, pricing documents, appendices, and technical specifications.
+Public-sector IT tenders are difficult to evaluate because the useful information is scattered across inconsistent sources:
 
-The goal of this project is to turn messy tender input into structured, reviewable information that can support faster and more consistent bid decisions.
+- notices may appear in structured feeds, portal pages, PDFs, ZIP packages, or external procurement systems
+- document links are often indirect, hidden behind portal navigation, or mixed with announcements and legal boilerplate
+- requirements, deadlines, exclusions, pricing signals, and service obligations are spread across multiple documents
+- bid teams need reviewable evidence, not just a generated summary
 
-## What this repository contains
+This project explores how to turn that messy input layer into structured review work: discover the opportunity, retrieve the right documents, extract requirements, match them against known service/SOW content, and surface uncertain items for human review.
 
-This repository is a sanitized technical case study of the Lytcon bid-analysis workflow. It documents the system design, workflow logic, data models, examples, and selected product screenshots.
+## What This Repository Contains
 
-It does not contain the full production codebase, private workflow exports, credentials, customer data, or live infrastructure configuration.
-## Live Product
+| Area | What is included | Status |
+| --- | --- | --- |
+| Tender discovery | Public-safe workflow documentation for finding relevant IT tenders and resolving document targets | Documented workflow |
+| Scraper/document retrieval | Architecture notes for source-specific portal handling, candidate scoring, URL validation, and document handoff | Prototype architecture |
+| RFP extraction | Workflow documentation for PDF ingestion, document classification, chunking, and requirement/question extraction | Documented workflow |
+| Gap analysis | Example retrieval-assisted matching flow for open RFP questions against reviewed SOW/Q&A content | Documented workflow |
+| SQL/data model | Simplified schema and review queries for requirement match rows | Public-safe example |
+| Examples | Fictional RFP input, extracted items, and retrieval match output | Demo data |
+| Product screens | Screenshots of tender detail review, upload, dashboard, workspace, and question review | Synthetic/sanitized UI examples |
 
-A public-facing version of the product concept is available at:
-
-https://lytcon.de
-
-The product is designed for IT service providers that need to review tender opportunities, understand requirements, and prepare bid-related artifacts more efficiently.
-
-## What the System Does
-
-The system is designed to:
-
-- discover relevant tender opportunities
-- collect tender metadata and document links
-- ingest RFP documents
-- extract text from PDFs
-- classify document types
-- split documents into relevant sections and chunks
-- extract requirements, facts, questions, and SOW-related information
-- support retrieval-assisted gap analysis
-- generate reviewable bid artifacts such as summaries, gap reports, and proposal drafts
-
-## High-Level Architecture
+## System Workflow
 
 ```text
-Tender source
-        ↓
-Tender discovery / scraper logic
-        ↓
-Document links and metadata
-        ↓
-Document ingestion
-        ↓
-PDF/text extraction
-        ↓
-Document classification and chunking
-        ↓
-AI-assisted requirement extraction
-        ↓
-Structured review outputs
-        ↓
-Gap analysis and bid-support artifacts
+Tender sources
+  -> discovery and source-specific retrieval
+  -> normalized tender metadata and validated document targets
+  -> document ingestion and storage
+  -> PDF/text extraction
+  -> document classification and chunking
+  -> requirement and question extraction
+  -> structured review rows
+  -> retrieval-assisted gap analysis
+  -> human-reviewed bid-support outputs
 ```
 
-## Workflow Examples
+The important design choice is that generated text is not treated as the final artifact. The system tries to preserve structure, status, source context, and review state so a human can decide what is safe to use in a bid.
+
+## Why The Technical Problem Is Non-Trivial
+
+Tender analysis is not just "upload a PDF and summarize it." The system has to handle several failure modes before analysis is useful:
+
+- source variability between TED-style notices and portal-specific procurement systems
+- document links that require browser/session behavior rather than static HTML parsing
+- false positives such as login pages, help pages, announcement PDFs, or unrelated navigation links
+- metadata extraction errors where labels, IDs, city names, or boilerplate can be mistaken for real tender fields
+- stale or duplicate uploaded documents
+- uncertain requirement matches where similar wording does not prove contractual coverage
+
+The architecture therefore separates discovery, retrieval, extraction, matching, and review instead of collapsing everything into one prompt or one workflow.
+
+## Key Components
 
 ### 1. Tender Discovery
 
-![Tender Discovery Workflow](images/workflow-tender-discovery.png)
+The tender discovery workflow builds a focused search profile for public-sector IT opportunities, branches between structured notice sources and portal-specific sources, normalizes metadata, validates document candidates, and hands usable targets into the RFP analysis pipeline.
 
-**Tender Discovery Workflow**  
-Discovers relevant public-sector IT tenders across TED and DTVP, handles source-specific retrieval, normalizes metadata, validates procurement document links, and hands usable document targets into the RFP analysis pipeline.
+![Tender discovery workflow](images/workflow-tender-discovery.png)
 
-### 2. RFP Document Classification and Extraction
+This workflow is documented in [`workflows/tender-discovery.md`](workflows/tender-discovery.md).
 
-![RFP Document Classification and Extraction](images/workflow-rfp-document-extraction.png)
+### 2. Scraper And Document Retrieval Layer
 
-**RFP Document Classification and Extraction**  
-Transforms raw RFP files into structured requirements, questions, summaries, and SOW signals through classification, routing, chunking, extraction, and review-oriented storage.
+The scraper layer is responsible for making the messy public-source boundary explicit. It is designed to:
 
-### 3. Retrieval-Assisted Gap Analysis
+- inspect tender notices and portal pages
+- detect whether a page is a notice, project page, login page, document page, or blocked flow
+- identify likely document packages or PDFs
+- score candidates based on link text, file type, surrounding context, and source behavior
+- reject unsafe or low-confidence targets
+- return a manual-review status instead of guessing when retrieval is uncertain
 
-![Retrieval-Assisted Gap Analysis](images/gap-analysis.png)
+The architecture notes are in [`scrapers/architecture.md`](scrapers/architecture.md).
 
-**Retrieval-Assisted Gap Analysis**  
-Matches open RFP questions against reviewed SOW/Q&A content, drafts cautious answers for unresolved items, and generates a reviewable gap-analysis artifact.
+### 3. RFP Document Classification And Extraction
 
-## Product Screenshots
+Once documents are available, the extraction workflow turns raw RFP files into structured review data. It covers PDF extraction, document-type classification, routing, section/chunk creation, requirement extraction, and persistence of extracted items.
 
-### Tender Detail View
+![RFP document classification and extraction workflow](images/workflow-rfp-document-extraction.png)
 
-![Tender Detail View](frontend/screenshots/tender-detail.png)
+This workflow is documented in [`workflows/rfp-document-extraction.md`](workflows/rfp-document-extraction.md).
 
-**Tender Detail View**  
-Shows normalized tender metadata and allows a relevant opportunity to be added into the RFP processing workflow.
+### 4. Retrieval-Assisted Gap Analysis
 
-### Document Upload Flow
+The gap-analysis workflow matches open RFP questions against reviewed SOW/Q&A content. High-confidence reviewed material can be reused; uncertain matches become draft answers that still require human review.
 
-![Document Upload Flow](frontend/screenshots/document-upload-flow.png)
+![Retrieval-assisted gap analysis workflow](images/gap-analysis.png)
 
-**Document Upload Flow**  
-Allows users to upload RFP documents and start the downstream document classification and extraction pipeline.
-
-### RFP Workspace
-
-![RFP Workspace](frontend/screenshots/rfp-workspace.png)
-
-**RFP Workspace**  
-Shows the review workspace after an RFP has been structured, including open questions, requirement coverage, deadlines, and output generation actions.
-
-## Core Components
-
-- Next.js frontend for product and workspace views
-- Next.js / Node-based scraper logic for tender discovery and document handling
-- n8n workflows for orchestration
-- PDF extraction and document classification
-- AI-assisted requirement and fact extraction
-- retrieval-assisted gap analysis
-- Supabase / PostgreSQL for structured data storage
-- Cloudflare R2 for document storage
-- structured output generation for bid review
-
-## Scraper and Document Retrieval
-
-The scraper layer is responsible for discovering relevant tender opportunities, resolving document links, validating downloadable artifacts, and passing documents into the RFP analysis pipeline.
-
-The most relevant technical pieces include:
-
-- browser automation for unstable procurement portals
-- source-specific retrieval for TED and portal-based tender systems
-- URL validation and safety checks
-- candidate scoring for likely document links
-- document download validation
-- upload handoff into document storage
-- workflow trigger into the analysis pipeline
+This workflow is documented in [`workflows/gap-analysis.md`](workflows/gap-analysis.md).
 
 ## Data Model
 
-The system does not treat AI summaries as the final output.
+The SQL example models extracted and matched findings as reviewable rows rather than final prose. Each row carries fields such as:
 
-Instead, extracted information is stored as structured rows that can be reviewed, filtered, compared, and reused in downstream workflows.
+- `row_type`: capability, limitation, pricing, contract term, ambiguity, or missing information
+- `polarity`: whether the finding is positive, negative, or neutral for bid evaluation
+- `importance`: review priority
+- `source_scope`: whether the evidence came from the RFP, SOW, SLA, pricing, merged content, or gap analysis
+- `comparison_text`, `raw_value`, and `normalized_value`
+- `review_status`: needs review, reviewed, approved, or rejected
 
-Example row types include:
+See [`sql/requirement_match_schema.sql`](sql/requirement_match_schema.sql) and [`sql/example_queries.sql`](sql/example_queries.sql).
 
-- capability
-- limitation
-- pricing
-- contract_term
-- ambiguity
-- missing_information
+Example review query:
 
-This structure helps separate covered requirements, risky requirements, missing information, and items that require human review.
-
-## Retrieval and Matching
-
-Retrieval is used where exact keyword matching is too brittle.
-
-Example use cases include:
-
-- matching RFP questions against reviewed SOW/Q&A content
-- retrieving relevant capability information when wording differs
-- identifying requirements that are covered, partially covered, or unclear
-- supporting cautious draft answers for human review
-
-The system is not designed to treat generated answers as final truth. Reviewed content is preferred where available, and uncertain outputs remain reviewable.
-
-## Example Output
-
-```json
-[
-  {
-    "question": "Can the provider offer 24/7 support for priority 1 incidents?",
-    "status": "covered",
-    "matched_source": "Managed support SOW",
-    "draft_answer": "Yes. The support model includes 24/7 coverage for priority 1 incidents.",
-    "review_required": true
-  },
-  {
-    "question": "Can the provider guarantee a 30-minute response time?",
-    "status": "needs_review",
-    "matched_source": "SLA profile",
-    "draft_answer": "The internal SLA profile references critical incident response targets, but the exact 30-minute commitment requires confirmation.",
-    "review_required": true
-  },
-  {
-    "question": "Is a named service manager included?",
-    "status": "unclear",
-    "matched_source": null,
-    "draft_answer": "No confirmed source was found. This should be reviewed before submission.",
-    "review_required": true
-  }
-]
+```sql
+select
+  row_type,
+  polarity,
+  importance,
+  service_name,
+  comparison_text,
+  raw_value,
+  normalized_value,
+  notes,
+  review_status
+from organization_requirement_match_rows
+where importance = 'high'
+  and row_type in ('limitation', 'ambiguity', 'missing_information')
+order by created_at desc;
 ```
 
+## Example Data
 
-## My Role
+The `examples/` folder contains fictional, public-safe examples:
 
-I founded Lytcon and built the core product logic behind this system.
+- [`sample-rfp-input.md`](examples/sample-rfp-input.md): a short synthetic RFP excerpt
+- [`sample-extracted-items.json`](examples/sample-extracted-items.json): structured requirements extracted from the sample
+- [`sample-embedding-match.json`](examples/sample-embedding-match.json): cautious retrieval-assisted matching output
 
-My work included:
+The retrieval example is intentionally conservative: similarity can find relevant source material, but it does not automatically prove that a bid requirement is covered.
 
-- designing the RFP analysis pipeline
-- building n8n workflows for document processing and gap analysis
-- creating scraper logic in a Next.js / Node environment
-- building the public-facing product website and workspace UI
-- designing SQL structures for requirement and match rows
-- working with Supabase / PostgreSQL
-- experimenting with retrieval and embedding-based matching
-- connecting frontend product flows with backend workflow automation
-- structuring the system around reviewable bid decisions instead of generic AI summaries
+## Product Screens
 
-## Current Status
+The screenshots use synthetic/demo data and are included to show the user workflow, not production usage.
 
-This repository documents the architecture, workflows, and product direction behind Lytcon Bid Analysis.
+![Tender detail view](frontend/screenshots/tender-detail.png)
 
-It is not presented as a finished production platform. The current focus is on validating tender discovery, document processing, requirement extraction, retrieval-assisted gap analysis, and review-oriented bid-support workflows.
+Tender detail review with normalized procurement metadata and the handoff from discovery into an RFP workspace.
 
-## What This Project Demonstrates
+![RFP dashboard](frontend/screenshots/rfp-dashboard.png)
 
-This project demonstrates the ability to:
+Bid command center that prioritizes RFPs by deadline pressure, analysis state, owner risk, and next action.
 
-- work with messy real-world procurement data
-- design workflow-based document processing pipelines
-- connect frontend product flows with backend automation
-- combine scraper logic, document extraction, structured storage, and review workflows
-- use AI as part of a larger system rather than as a standalone chatbot
-- think in structured data models instead of plain summaries
-- build software around operational decision support
+![RFP workspace](frontend/screenshots/rfp-workspace.png)
+
+Workspace view showing requirement coverage, open questions, deadline pressure, and actions for generating review artifacts.
+
+![Question review](frontend/screenshots/questions-review.png)
+
+Question review queue where extracted requirements and draft answers remain editable and status-driven.
+
+![Document upload flow](frontend/screenshots/document-upload-flow.png)
+
+Document upload flow for adding tender files before downstream classification and extraction.
+
+## Implemented, Documented, And Experimental
+
+| Category | Current state |
+| --- | --- |
+| Implemented/prototyped | Product screens, workflow diagrams, example schemas, example review queries, retrieval/matching examples, scraper architecture notes |
+| Documented but environment-specific | n8n orchestration, storage handoffs, portal-specific retrieval, RFP processing triggers |
+| Experimental | Portal coverage, document candidate scoring, retrieval thresholds, gap-answer drafting, bid-support output generation |
+| Not claimed | Production readiness, complete portal coverage, fully automated bid submission, customer deployment, security certification |
+
+## Design Principles
+
+- Prefer reviewable structured rows over untraceable summaries.
+- Keep uncertain answers separate from reviewed evidence.
+- Treat document retrieval as its own reliability problem.
+- Return manual-review states when the system cannot confidently resolve a document or requirement.
+- Use public-safe examples in this repository instead of exposing live operational configuration.
+
+## Limitations
+
+This repository should be read as an early technical artifact, not a finished enterprise product.
+
+- The public repo does not include runnable credentials, live n8n endpoints, or production infrastructure.
+- Workflow screenshots are documentation artifacts and may not be directly runnable outside the original environment.
+- Portal retrieval remains source-specific and requires ongoing testing because procurement portals change.
+- The SQL schema is a simplified public example, not a full database migration history.
+- Example data is synthetic and should not be interpreted as customer traction or production validation.
+
+## Repository Structure
+
+```text
+.
+├── README.md
+├── examples/
+│   ├── README.md
+│   ├── sample-rfp-input.md
+│   ├── sample-extracted-items.json
+│   └── sample-embedding-match.json
+├── frontend/
+│   └── screenshots/
+├── images/
+│   ├── workflow-tender-discovery.png
+│   ├── workflow-rfp-document-extraction.png
+│   └── gap-analysis.png
+├── scrapers/
+│   └── architecture.md
+├── sql/
+│   ├── requirement_match_schema.sql
+│   └── example_queries.sql
+└── workflows/
+    ├── tender-discovery.md
+    ├── rfp-document-extraction.md
+    └── gap-analysis.md
+```
+
+## Why I Built This
+
+I built this project to understand a real operational problem: how IT service providers can make better bid/no-bid and response decisions when tender information is fragmented across public portals, documents, and internal service knowledge.
+
+The work forced me to make practical technical tradeoffs: where browser automation is useful, where structured SQL matters more than prose, where automation should stop for human review, and how to explain a messy workflow clearly enough for both technical and non-technical users.
+
+## Relevance To Palantir-Style Work
+
+This project is relevant because it deals with an ambiguous real-world workflow rather than a clean toy problem. It required independent learning across scraping, workflow orchestration, SQL modeling, document processing, product design, and user review flows.
+
+The most important part is not that the system is finished. It is that the repository shows a builder trying to impose structure on messy operational data, make uncertainty visible, and design software around human decision-making.
