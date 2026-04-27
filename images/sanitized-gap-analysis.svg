@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="420" viewBox="0 0 1200 420" role="img" aria-labelledby="title desc">
+  <title id="title">Sanitized retrieval-assisted gap analysis workflow</title>
+  <desc id="desc">High-level public-safe diagram showing open RFP questions, reviewed source content, retrieval matching, draft answers, and human review.</desc>
+  <defs>
+    <style>
+      .bg { fill: #f8fafc; }
+      .box { fill: #ffffff; stroke: #0f7890; stroke-width: 2; rx: 12; }
+      .source { fill: #f0fdf4; stroke: #15803d; stroke-width: 2; rx: 12; }
+      .draft { fill: #fff7ed; stroke: #c2410c; stroke-width: 2; rx: 12; }
+      .review { fill: #fefce8; stroke: #ca8a04; stroke-width: 2; rx: 12; }
+      .text { font-family: Inter, Arial, sans-serif; fill: #0f172a; font-size: 20px; font-weight: 700; }
+      .small { font-family: Inter, Arial, sans-serif; fill: #334155; font-size: 15px; }
+      .caption { font-family: Inter, Arial, sans-serif; fill: #475569; font-size: 14px; }
+      .arrow { stroke: #334155; stroke-width: 3; fill: none; marker-end: url(#arrow); }
+    </style>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth">
+      <path d="M2,2 L10,6 L2,10 Z" fill="#334155" />
+    </marker>
+  </defs>
+  <rect class="bg" width="1200" height="420"/>
+  <text class="text" x="50" y="54">Retrieval-Assisted Gap Analysis</text>
+  <text class="caption" x="50" y="82">Public-safe view: retrieval supports review decisions, but uncertain matches remain draft-only.</text>
+  <rect class="box" x="70" y="130" width="190" height="88"/>
+  <text class="text" x="98" y="166">Open RFP</text>
+  <text class="small" x="98" y="193">Questions and gaps</text>
+  <rect class="source" x="70" y="255" width="190" height="88"/>
+  <text class="text" x="98" y="291">Reviewed Sources</text>
+  <text class="small" x="98" y="318">SOW, SLA, Q and A</text>
+  <path class="arrow" d="M260 174 C345 174 345 210 420 210"/>
+  <path class="arrow" d="M260 299 C345 299 345 230 420 230"/>
+  <rect class="source" x="425" y="170" width="190" height="100"/>
+  <text class="text" x="452" y="207">Retrieve</text>
+  <text class="small" x="452" y="234">Find related evidence</text>
+  <path class="arrow" d="M615 220 H690"/>
+  <rect class="draft" x="695" y="145" width="185" height="150"/>
+  <text class="text" x="724" y="183">Classify Match</text>
+  <text class="small" x="724" y="211">Covered</text>
+  <text class="small" x="724" y="234">Partial</text>
+  <text class="small" x="724" y="257">Needs review</text>
+  <path class="arrow" d="M880 220 H955"/>
+  <rect class="review" x="960" y="155" width="170" height="130"/>
+  <text class="text" x="987" y="193">Review Output</text>
+  <text class="small" x="987" y="222">Draft answers</text>
+  <text class="small" x="987" y="245">Evidence notes</text>
+  <text class="small" x="987" y="268">Next actions</text>
+  <text class="caption" x="70" y="375">Reviewed source material is preferred. Draft answers remain explicitly review-required when evidence is incomplete.</text>
+</svg>
