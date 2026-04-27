@@ -72,7 +72,7 @@ Transforms raw RFP files into structured requirements, questions, summaries, and
 
 ### 3. Retrieval-Assisted Gap Analysis
 
-![Retrieval-Assisted Gap Analysis](images/workflow-gap-analysis.png)
+![Retrieval-Assisted Gap Analysis](images/gap-analysis.png)
 
 **Retrieval-Assisted Gap Analysis**  
 Matches open RFP questions against reviewed SOW/Q&A content, drafts cautious answers for unresolved items, and generates a reviewable gap-analysis artifact.
