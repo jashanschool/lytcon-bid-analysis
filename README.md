@@ -63,13 +63,13 @@ The architecture therefore separates discovery, retrieval, extraction, matching,
 
 n8n is used as the orchestration layer: it connects ingestion steps, storage handoffs, document processing, extraction, and review workflows. The project does not rely on n8n as a substitute for backend logic.
 
-Several parts of this domain are better expressed as deterministic code because AI agents and workflow tools can make brittle decisions around URLs, document candidates, field extraction, and requirement matching. The public-safe JavaScript modules in `src/` show the kind of backend logic that sits behind the workflows:
+Several parts of this domain are better expressed as deterministic code because AI agents and workflow tools can make brittle decisions around URLs, document candidates, field extraction, and requirement matching. The public-safe JavaScript modules in `src/` are based on the code-node logic used inside the workflow exports and show the kind of backend logic that sits behind the orchestration:
 
-- URL safety validation for public tender links
-- document candidate scoring and ranking
-- document target extraction from portal links
-- requirement parsing from RFP text
-- retrieval-style gap matching against reviewed source content
+- TED-style tender search profile construction and metadata normalization
+- document link resolution, URL safety validation, and candidate scoring
+- filename normalization, document classification, text cleanup, section splitting, and chunking
+- structured extraction-output parsing and database-row preparation
+- reviewed-vs-draft answer routing for retrieval-assisted gap analysis
 
 These modules are intentionally small and testable. They are reference implementations, not a full production scraper.
 
@@ -77,7 +77,7 @@ These modules are intentionally small and testable. They are reference implement
 
 The tender discovery workflow builds a focused search profile for public-sector IT opportunities, branches between structured notice sources and portal-specific sources, normalizes metadata, validates document candidates, and hands usable targets into the RFP analysis pipeline.
 
-![Tender discovery workflow](images/tender-discovery.png)
+![Tender discovery workflow](images/sanitized-tender-discovery.svg)
 
 This workflow is documented in [`workflows/tender-discovery.md`](workflows/tender-discovery.md).
 
@@ -223,13 +223,21 @@ This repository should be read as an early technical artifact, not a finished en
 │   └── architecture.md
 ├── src/
 │   ├── extraction/
-│   │   └── requirementParser.js
+│   │   ├── documentClassifier.js
+│   │   ├── documentTextPipeline.js
+│   │   ├── requirementParser.js
+│   │   └── structuredOutput.js
 │   ├── matching/
-│   │   └── gapMatcher.js
-│   └── retrieval/
+│   │   ├── gapMatcher.js
+│   │   └── reviewAnswerFlow.js
+│   ├── retrieval/
 │       ├── candidateScoring.js
 │       ├── documentTargets.js
 │       └── urlSafety.js
+│   └── tender/
+│       ├── buildTedSearchQuery.js
+│       ├── normalizeTenderMetadata.js
+│       └── resolveDocumentLinks.js
 ├── sql/
 │   ├── requirement_match_schema.sql
 │   └── example_queries.sql
